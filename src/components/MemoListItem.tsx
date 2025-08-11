@@ -1,17 +1,42 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from './Icon';
+import { Link } from 'expo-router';
+import { Memo } from '../../types/Memo';
 
-const MemoListItem = () => {
-  return (
-    <View style={styles.memoListItem}>
-        <View>
-            <Text style={styles.memoListItemTitle}>買い物リスト</Text>
-            <Text style={styles.memoListItemDate}>2025年8月10日 10:00</Text>
-        </View>
-        <View>
-            <Text>X</Text>
-        </View>
-    </View>
-  )
+type Props = {
+    memo: Memo;
+}
+
+const MemoListItem = ({ memo }: Props): React.JSX.Element => {
+    const { bodyText, updatedAt, createdAt } = memo;
+    //if(bodyText === null || updatedAt === null || createdAt === null) return null;
+    const dateString = memo.updatedAt.toDate()
+    const formattedDate = new Intl.DateTimeFormat('ja-JP', {
+        timeZone: "Asia/Tokyo",
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    }).format(dateString);
+    return (
+        <Link 
+            href={{ pathname: "memo/detail", params: { id: memo.id } }} 
+            asChild
+        >
+            <TouchableOpacity style={styles.memoListItem}>
+                <TouchableOpacity>
+                    <Text numberOfLines={1} style={styles.memoListItemTitle}>{memo.bodyText}</Text>
+                    <Text style={styles.memoListItemDate}>{formattedDate}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Icon name="x" size={24} color="#b0b0b0" />
+                </TouchableOpacity>
+            </TouchableOpacity>
+        </Link>
+    )
 }
 
 export default MemoListItem;
